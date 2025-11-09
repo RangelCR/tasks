@@ -1,4 +1,4 @@
-name: Deploy Cotacao WEB
+name: Deploy APP TASKS
 on:
   workflow_dispatch:
 jobs: 
