@@ -1,0 +1,33 @@
+name: Deploy APP TASKS
+on:
+  workflow_dispatch:
+jobs: 
+  CI:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtendo o código
+        uses: actions/checkout@v5.0.0
+      - name: Autenticando no docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Construção e push da imagem front
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            rangelcr/front_task:v${{ github.run_number }}
+            rangelcr/front_task:latest
+      - name: Construção e push da imagem back
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            rangelcr/task_api:v${{ github.run_number }}
+            rangelcr/task_api:latest            
