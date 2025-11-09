@@ -1,11 +1,17 @@
-FROM node:24-alpine
+# BUILD
+FROM node:18 AS build
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
-RUN apk update && apk upgrade
-RUN addgroup -S node_group && adduser -S node_user -G node_group
-RUN mkdir -p /app/tmp && chown -R node_user:node_group /app/tmp
-EXPOSE 5000
-USER node_user
-CMD [ "node", "server.js" ]
+RUN npm run build
+
+#Nginx
+FROM nginx:1.25-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
