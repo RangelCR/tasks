@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front-pod    
+  template:
+    metadata:
+      labels:
+        app: front-pod
+    spec:
+      containers:
+      - name: front-pod
+        image: rangelcr/front_task:v2
+        env:
+        - name: VITE_API_URL
+          value: /api/todos
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-service
+spec:
+  type: NodePort
+  selector:
+    app: front-pod
+  ports:
+    - protocol: TCP
+      port: 80 
+      targetPort: 80
+      nodePort: 30000         

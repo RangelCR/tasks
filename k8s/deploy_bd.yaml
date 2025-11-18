@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-pod  
+  template:
+    metadata:
+      labels:
+        app: db-pod
+    spec:
+      containers:
+      - name: db-pod
+        image: postgres
+        env:
+        - name: POSTGRES_USER
+          value: todo_user
+        - name: POSTGRES_PASSWORD
+          value: senha123
+        - name: POSTGRES_DB
+          value: todos
+        ports:
+        - containerPort: 5432
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  db-service
+spec:
+  selector:
+    app:  db-pod
+  type: ClusterIP
+  ports:
+  - name: tcp
+    port:  5432
+    targetPort:  5432   

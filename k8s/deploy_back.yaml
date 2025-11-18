@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back-pod 
+  template:
+    metadata:
+      labels:
+        app: back-pod
+    spec:
+      containers:
+      - name: back-pod
+        image: rangelcr/task_api
+        env:
+        - name: DATABASE_URL
+          value: postgresql://todo_user:senha123@db-service:5432/todos  
+        ports:
+        - containerPort: 5000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: back-service
+spec:
+  selector:
+    app: back-pod
+  type: ClusterIP
+  ports:
+  - name: tcp
+    port:  80
+    targetPort: 5000
+      
