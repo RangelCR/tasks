@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarefas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #181818;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent-dim: #a8cc20;
+      --text: #f0f0f0;
+      --muted: #666;
+      --done: #3a3a3a;
+      --done-text: #555;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px 80px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    header h1 span {
+      color: var(--accent);
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .add-form {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .add-form input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.9rem;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .add-form input:focus {
+      border-color: var(--accent);
+    }
+
+    .add-form input::placeholder { color: var(--muted); }
+
+    .add-form button {
+      background: var(--accent);
+      color: #0e0e0e;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      padding: 14px 20px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .add-form button:hover { background: var(--accent-dim); }
+    .add-form button:active { transform: scale(0.97); }
+
+    .list {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      transition: border-color 0.2s, opacity 0.3s;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .todo-item.done {
+      background: var(--done);
+      border-color: transparent;
+    }
+
+    .todo-item.done .todo-title {
+      text-decoration: line-through;
+      color: var(--done-text);
+    }
+
+    /* custom checkbox */
+    .todo-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--muted);
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .todo-item input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .todo-item input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px; top: 0px;
+      width: 5px; height: 9px;
+      border: 2px solid #0e0e0e;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+
+    .todo-title {
+      flex: 1;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      transition: color 0.2s;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      line-height: 1;
+      transition: color 0.2s;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .delete-btn:hover { color: #ff4f4f; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 40px 0;
+    }
+
+    .counter {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .counter span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>to<span>do</span><br/>list.</h1>
+  <p>suas tarefas, sem frescura</p>
+</header>
+
+<form class="add-form" id="addForm">
+  <input type="text" id="titleInput" placeholder="nova tarefa..." autocomplete="off" />
+  <button type="submit">+ add</button>
+</form>
+
+<div class="counter" id="counter"></div>
+<div class="list" id="list"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
