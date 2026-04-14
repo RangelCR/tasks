@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: back-pod
-        image: rangelcr/task_api
+        image: rangelcr/api-task
         env:
         - name: DATABASE_URL
           value: postgresql://todo_user:senha123@db-service:5432/todos  
