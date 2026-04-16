@@ -13,21 +13,30 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Construção e push da imagem DB
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./DB
+          file: ./DB/Dockerfile
+          push: true
+          tags: |
+            rangelcr/db-task:v${{ github.run_number }}
+            rangelcr/db-task:latest          
       - name: Construção e push da imagem front
         uses: docker/build-push-action@v6.18.0
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ./front
+          file: ./front/Dockerfile
           push: true
           tags: |
-            rangelcr/front_task:v${{ github.run_number }}
-            rangelcr/front_task:latest
-      - name: Construção e push da imagem back
+            rangelcr/front-task:v${{ github.run_number }}
+            rangelcr/front-task:latest
+      - name: Construção e push da imagem da API
         uses: docker/build-push-action@v6.18.0
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./api
+          file: ./api/Dockerfile
           push: true
           tags: |
-            rangelcr/task_api:v${{ github.run_number }}
-            rangelcr/task_api:latest            
+            rangelcr/api-task:v${{ github.run_number }}
+            rangelcr/api-task:latest            

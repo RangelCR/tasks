@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: front-pod
-        image: rangelcr/front_task:v2
+        image: rangelcr/front-task
         env:
         - name: VITE_API_URL
           value: /api/todos
