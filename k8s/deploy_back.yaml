@@ -19,12 +19,12 @@ spec:
         - name: DATABASE_URL
           value: postgresql://todo_user:senha123@db-service:5432/todos  
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: back-service
+  name: api-todo
 spec:
   selector:
     app: back-pod
@@ -32,5 +32,5 @@ spec:
   ports:
   - name: tcp
     port:  80
-    targetPort: 5000
+    targetPort: 3000
       
