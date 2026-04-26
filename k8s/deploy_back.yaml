@@ -57,6 +57,6 @@ spec:
   type: ClusterIP
   ports:
   - name: tcp
-    port: 3000
-    targetPort: 3000
+    port:  80
+    targetPort: 5000
       
