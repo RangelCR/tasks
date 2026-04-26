@@ -58,5 +58,5 @@ spec:
   ports:
   - name: tcp
     port:  80
-    targetPort: 5000
+    targetPort: 3000
       
