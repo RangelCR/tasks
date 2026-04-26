@@ -1,6 +1,11 @@
-name: Deploy APP TASKS
+name: APP TASKS
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'front/**'
+      - 'api/**'
 jobs: 
   CI:
     name: CI
@@ -12,16 +17,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Construção e push da imagem DB
-        uses: docker/build-push-action@v6.18.0
-        with:
-          context: ./DB
-          file: ./DB/Dockerfile
-          push: true
-          tags: |
-            rangelcr/db-task:v${{ github.run_number }}
-            rangelcr/db-task:latest          
+          password: ${{ secrets.DOCKERHUB_TOKEN }}      
       - name: Construção e push da imagem front
         uses: docker/build-push-action@v6.18.0
         with:
@@ -39,4 +35,22 @@ jobs:
           push: true
           tags: |
             rangelcr/api-task:v${{ github.run_number }}
-            rangelcr/api-task:latest            
+            rangelcr/api-task:latest
+
+  CD:
+    name: CD
+    needs: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtendo o código
+        uses: actions/checkout@v5.0.0
+      - name: Update image tag in manifest
+        run: |
+          sed -i "s|rangelcr/front-task:.*|rangelcr/front-task:v${{ github.run_number }}|" k8s/front-deployment.yaml
+          sed -i "s|rangelcr/api-task:.*|rangelcr/api-task:v${{ github.run_number }}|" k8s/api-deployment.yaml
+          git config user.email "hrangel584@gmail.com"
+          git config user.name "rangelcr"
+          git add k8s/
+          git commit -m "Atualizando imagens v${{ github.run_number }} [skip ci]"
+          git push            
+               
