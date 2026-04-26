@@ -17,11 +17,20 @@ spec:
         image: postgres
         env:
         - name: POSTGRES_USER
-          value: todo_user
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_USER
         - name: POSTGRES_PASSWORD
-          value: senha123
+          valueFrom:
+            secretKeyRef:
+              name: api-db-secret
+              key: DB_PASSWORD
         - name: POSTGRES_DB
-          value: todos
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_NAME
         ports:
         - containerPort: 5432
         volumeMounts:                   

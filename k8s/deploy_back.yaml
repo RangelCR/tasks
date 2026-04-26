@@ -1,36 +1,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: back-pod
+  name: api-todo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: back-pod 
+      app: api-todo
   template:
     metadata:
       labels:
-        app: back-pod
+        app: api-todo
     spec:
       containers:
-      - name: back-pod
+      - name: api-todo
         image: rangelcr/api-task
+        imagePullPolicy: Always
         env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_PORT
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_USER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: api-db-configmap
+              key: DB_NAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-db-secret
+              key: DB_PASSWORD
         - name: DATABASE_URL
-          value: postgresql://todo_user:senha123@db-service:5432/todos  
+          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: back-service
+  name: api-todo
 spec:
   selector:
-    app: back-pod
+    app: api-todo
   type: ClusterIP
   ports:
   - name: tcp
-    port:  80
-    targetPort: 5000
+    port: 3000
+    targetPort: 3000
       
