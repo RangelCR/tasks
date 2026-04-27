@@ -29,7 +29,7 @@ jobs:
 
   commit-api:
     name: COMMIT-API
-    needs: CI
+    needs: CI-API
     runs-on: ubuntu-latest
     steps:
       - name: Obtendo o código
